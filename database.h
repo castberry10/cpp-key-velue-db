@@ -17,10 +17,14 @@ struct Entry {
   void *value;
 };
 
-struct Database {
-  int size;
-  int current;
+struct Link{
+  Link *nextLink;
+  // Link *prevLink;
   Entry *entry;
+};
+
+struct Database {
+  Link link;
 };
 
 // 엔트리를 생성한다.
