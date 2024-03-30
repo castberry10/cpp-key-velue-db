@@ -19,6 +19,7 @@ struct Entry {
 
 struct Database {
   int size;
+  int current;
   Entry *entry;
 };
 

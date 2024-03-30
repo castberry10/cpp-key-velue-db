@@ -35,11 +35,21 @@ void list(){
 }
 void get(){
     std::string key = "";
+    std::cout << "key: ";
     std::cin >> key;
-    Entry getEntryData = get(db, key);
-    if(getEntryData.type == Type::ARRAY){
+    Entry* getEntryData = get(db, key);
+    if(getEntryData == nullptr){ // 만약 값이 없다면 ~~ 
+        std::cout << "not found" << std::endl;
+        return;
+    }
+    //이제 무조건 값이 있는 경우
+    else if(getEntryData->type == Type::ARRAY){
 
-    }else{
+    }else if(getEntryData->type == Type::INT){
+
+    }else if(getEntryData->type == Type::DOUBLE){
+
+    }else if(getEntryData->type == Type::STRING){
 
     }
 }
@@ -54,6 +64,7 @@ void exit(){
 }
 int main(){
     std::string inputString = "";
+    init(db);
     while(1){
         std::cout << "command (list, add, get, del, exit): ";
         std::cin >> inputString;
@@ -66,6 +77,7 @@ int main(){
         }else if(inputString == "del"){
             del();
         }else if(inputString == "exit"){
+            destroy(db);
             exit();
         }else{
             std::cout << "command Error" << std::endl << std::endl;
