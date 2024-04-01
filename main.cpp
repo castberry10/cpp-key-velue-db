@@ -6,34 +6,59 @@
 // get - Key를 입력 받아 “KEY: VALUE” 형태로 출력한다.
 // del - Key를 입력 받아 엔트리를 제거한다.
 // exit - 프로그램을 종료한다.
-namespace state{
-
-}
 
 Database db;
 
-void add(){
+
+void inputArray(){
+
+}
+void _add(){
     std::string key = "";
     std::string type = "";
-    std::string value = "";
     std::cout << "key: ";
     std::cin >> key;
     std::cout << "type (int, double, string, array): ";
     std::cin >> type;
     if(type == "int"){
-
-    }else if(type == "doble"){
-
+        int value;
+        std::cout << "value: ";
+        std::cin >> value;
+        Entry * inputEntry = create(Type::INT, key, &value);
+        add(db, inputEntry);
+    }else if(type == "double"){
+        double value;
+        std::cout << "value: ";
+        std::cin >> value;
+        Entry * inputEntry = create(Type::DOUBLE, key, &value);
+        add(db, inputEntry);
     }else if(type == "string"){
-
+        std::string value = "";
+        std::cout << "value: ";
+        std::cin >> value;
+        Entry * inputEntry = create(Type::STRING, key, &value);
+        add(db, inputEntry);
     }else if(type == "array"){
+        // 히히 나중에 해야지
+    }
 
+}
+void _list(){
+    for (unsigned long long i = 0; i < db.size; i++) {
+        std::cout<<db.entry[i]->key<<": ";
+        if(db.entry[i]->type == Type::INT){
+            std::cout << *(static_cast<int*>(db.entry[i]->value));
+        }else if(db.entry[i]->type == Type::DOUBLE){
+            std::cout << *(static_cast<double*>(db.entry[i]->value));
+        }else if(db.entry[i]->type == Type::STRING){
+            std::cout <<"\""<< *(static_cast<std::string*>(db.entry[i]->value)) <<"\"";
+        }else if(db.entry[i]->type == Type::ARRAY){
+            // 히히 나중에 해야지
+        }
+        std::cout<<std::endl;
     }
 }
-void list(){
-
-}
-void get(){
+void _get(){
     std::string key = "";
     std::cout << "key: ";
     std::cin >> key;
@@ -43,17 +68,20 @@ void get(){
         return;
     }
     //이제 무조건 값이 있는 경우
-    else if(getEntryData->type == Type::ARRAY){
+    std::cout<<getEntryData->key<<": ";
 
+    if(getEntryData->type == Type::ARRAY){
+        // 히히 나중에 해야지
     }else if(getEntryData->type == Type::INT){
-
+        std::cout << *(static_cast<int*>(getEntryData->value));
     }else if(getEntryData->type == Type::DOUBLE){
-
+        std::cout << *(static_cast<double*>(getEntryData->value));
     }else if(getEntryData->type == Type::STRING){
-
+        std::cout <<"\""<< *(static_cast<std::string*>(getEntryData->value)) <<"\"";
     }
+    std::cout<<std::endl;
 }
-void del(){
+void _del(){
     std::string key = "";
     std::cin >> key;
     remove(db, key);
@@ -69,13 +97,13 @@ int main(){
         std::cout << "command (list, add, get, del, exit): ";
         std::cin >> inputString;
         if(inputString == "add"){
-            add();
+            _add();
         }else if(inputString == "list"){
-            list();
+            _list();
         }else if(inputString == "get"){
-            get();
+            _get();
         }else if(inputString == "del"){
-            del();
+            _del();
         }else if(inputString == "exit"){
             destroy(db);
             exit();
