@@ -1,13 +1,10 @@
 FLAGS = -Werror
 
-main.o: main.cpp
-	g++ ${FLAGS} -c main.cpp
+main.exe: main.o database.o
+	g++ -o ./main.exe ./*.o
 
-database.o: database.cpp
-	g++ ${FLAGS} -c database.cpp
-
-main.exe: main.o
-	g++ -o main.exe *.o
+main.o : main.cpp database.cpp database.h
+	g++ -Werror -std=c++11 -c ./*.cpp
 
 clean:
 	rm *.o

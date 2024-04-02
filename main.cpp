@@ -148,36 +148,49 @@ void _add(){
 
 void getArray(Array* array){
     std::cout << "[" ;
-    for(int i=0; i<array->size; i++){
-        if(i != 0){
-            std::cout <<", ";
+    if(array->type == Type::ARRAY){       
+        getArray(static_cast<Array*>(array->items));
+    }else if(array->type == Type::INT){
+        for(int i=0; i<array->size; i++){
+            if(i != 0){
+                std::cout <<", ";
+            }
+            std::cout << static_cast<int*>(array->items)[i];
         }
-        if(array->type == Type::ARRAY){
-            
-            getArray(static_cast<Array*>(array->items));
-        }else if(array->type == Type::INT){
-            std::cout << *(static_cast<int*>(array->items));
-        }else if(array->type == Type::DOUBLE){
-            std::cout << *(static_cast<double*>(array->items));
-        }else if(array->type == Type::STRING){
-            std::cout <<"\""<< *(static_cast<std::string*>(array->items)) <<"\"";
+    }else if(array->type == Type::DOUBLE){
+        for(int i=0; i<array->size; i++){
+            if(i != 0){
+                std::cout <<", ";
+            }
+            std::cout << (static_cast<double*>(array->items)[i]);
+        }
+    }else if(array->type == Type::STRING){
+        for(int i=0; i<array->size; i++){
+            if(i != 0){
+                std::cout <<", ";
+            }
+            std::cout <<"\""<< (static_cast<std::string*>(array->items)[i]) <<"\"";
         }
     }
+
     std::cout << "]" << std::endl;
 }
 void _list(){
     for (unsigned long long i = 0; i < db->size; i++) {
-        std::cout<<db->entry[i]->key<<": ";
-        if(db->entry[i]->type == Type::INT){
-            std::cout << *(static_cast<int*>(db->entry[i]->value));
-        }else if(db->entry[i]->type == Type::DOUBLE){
-            std::cout << *(static_cast<double*>(db->entry[i]->value));
-        }else if(db->entry[i]->type == Type::STRING){
-            std::cout <<"\""<< *(static_cast<std::string*>(db->entry[i]->value)) <<"\"";
-        }else if(db->entry[i]->type == Type::ARRAY){
-            getArray(static_cast<Array*>(db->entry[i]->value));
+        if(db->entry[i]->value != nullptr){
+            std::cout<<db->entry[i]->key<<": ";
+            if(db->entry[i]->type == Type::INT){
+                std::cout << *(static_cast<int*>(db->entry[i]->value));
+            }else if(db->entry[i]->type == Type::DOUBLE){
+                std::cout << *(static_cast<double*>(db->entry[i]->value));
+            }else if(db->entry[i]->type == Type::STRING){
+                std::cout <<"\""<< *(static_cast<std::string*>(db->entry[i]->value)) <<"\"";
+            }else if(db->entry[i]->type == Type::ARRAY){
+                getArray(static_cast<Array*>(db->entry[i]->value));
+            }
+            std::cout<<std::endl;
         }
-        std::cout<<std::endl;
+        
     }
 }
 void _get(){
@@ -220,8 +233,8 @@ int main(){
     while(1){
 
         ///debug
-        std::cout << "db size: " <<db->size << std::endl;
-        std::cout << "db capacity: " <<db->capacity << std::endl;
+        // std::cout << "db size: " <<db->size << std::endl;
+        // std::cout << "db capacity: " <<db->capacity << std::endl;
         
         ///debug
         

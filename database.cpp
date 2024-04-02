@@ -52,7 +52,7 @@ Entry *create(Type type, std::string key, void *value){
 
 // 데이터베이스를 초기화한다.
 void init(Database &database){
-    database.capacity = 16;
+    database.capacity = 128;
     database.size = 0;
     // Entry* entrylist = new Entry[database.size];
     database.entry = new Entry*[database.capacity];
@@ -63,14 +63,22 @@ void init(Database &database){
 // Entry 포인트 배열을 복사한다.
 void dataCopy(Database &database, Entry **currentEntry, Entry **copyEntry){
     for (int i = 0; i < database.size; ++i) {
-        // if(currentEntry[i]->type == Type::INT){
-        // }else if(currentEntry[i]->type == Type::DOUBLE){
-        // }else if(currentEntry[i]->type == Type::STRING){
-        // }else if(currentEntry[i]->type == Type::ARRAY){
-        // } 생각해보니 포인터를 가진 배열이니까 포인터를 까서 안넣어도 되네
         copyEntry[i] = currentEntry[i];
     }
 
+}
+
+void deepCopyEntry(Entry*& destination, Entry* source) {
+    destination = new Entry;
+    destination->type = source->type;
+    destination->key = source->key;
+    destination->value = source->value;
+}
+
+void dataCopy(Database &database, Entry **copyEntry) {
+    for (unsigned long long i = 0; i < database.size; ++i) {
+        deepCopyEntry(copyEntry[i], database.entry[i]);
+    }
 }
 
 
@@ -80,16 +88,26 @@ void add(Database &database, Entry *entry){
     if(database.capacity <= database.size){
         database.capacity *= 2;
         Entry ** newEntry = new Entry *[database.capacity];
+        
         dataCopy(database, database.entry, newEntry);
-        for (unsigned long long i = 0; i < database.capacity; i++) {
+        
+        for (unsigned long long i = 0; i < database.size; i++) {
+            std::cout<<database.entry[i]<<std::endl;
             delete database.entry[i]; 
         }
-        delete[] entry;  
+        // std::cout<<"4"<<std::endl;
+        
+        delete[] database.entry;
+        // std::cout<<"4.5"<<std::endl;  
         database.entry = newEntry;
+        // std::cout<<"5"<<std::endl;
+        
     }
 
     database.entry[database.size] = entry;
     database.size++;
+    // std::cout<<"6"<<std::endl;
+        
     
 }
 
@@ -118,6 +136,22 @@ void remove(Database &database, std::string &key){
         }
     }
 }
+void delArray(Array & array){
+    if(&array != nullptr){
+        if(array.type == Type::ARRAY){
+            delArray(*(static_cast<Array*>(array.items)));
+        }else{
+            if(array.type == Type::INT){
+                delete static_cast<int*>(array.items);
+            }else if(array.type == Type::DOUBLE){
+                delete static_cast<std::string*>(array.items);
+            }else if(array.type == Type::STRING){
+                delete static_cast<double*>(array.items);
+            }
+        }
+
+    }
+}
 void delEntryValue(Entry * entry){
     if(entry != nullptr){
         if(entry->type == Type::INT){
@@ -127,7 +161,8 @@ void delEntryValue(Entry * entry){
         }else if(entry->type == Type::STRING){
             delete static_cast<double*>(entry->value);
         }else if(entry->type == Type::ARRAY){
-            
+            delArray(*(static_cast<Array*>(entry->value)));
+            delete static_cast<Array*>(entry->value);
         }
     }
 }
