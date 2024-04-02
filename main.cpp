@@ -7,8 +7,8 @@
 // del - Key를 입력 받아 엔트리를 제거한다.
 // exit - 프로그램을 종료한다.
 
-Database db;
-
+// Database db;
+Database *db = new Database;
 
 void inputArray(){
 
@@ -25,34 +25,34 @@ void _add(){
         std::cout << "value: ";
         std::cin >> value;
         Entry * inputEntry = create(Type::INT, key, &value);
-        add(db, inputEntry);
+        add(*db, inputEntry);
     }else if(type == "double"){
         double value;
         std::cout << "value: ";
         std::cin >> value;
         Entry * inputEntry = create(Type::DOUBLE, key, &value);
-        add(db, inputEntry);
+        add(*db, inputEntry);
     }else if(type == "string"){
         std::string value = "";
         std::cout << "value: ";
         std::cin >> value;
         Entry * inputEntry = create(Type::STRING, key, &value);
-        add(db, inputEntry);
+        add(*db, inputEntry);
     }else if(type == "array"){
         // 히히 나중에 해야지
     }
 
 }
 void _list(){
-    for (unsigned long long i = 0; i < db.size; i++) {
-        std::cout<<db.entry[i]->key<<": ";
-        if(db.entry[i]->type == Type::INT){
-            std::cout << *(static_cast<int*>(db.entry[i]->value));
-        }else if(db.entry[i]->type == Type::DOUBLE){
-            std::cout << *(static_cast<double*>(db.entry[i]->value));
-        }else if(db.entry[i]->type == Type::STRING){
-            std::cout <<"\""<< *(static_cast<std::string*>(db.entry[i]->value)) <<"\"";
-        }else if(db.entry[i]->type == Type::ARRAY){
+    for (unsigned long long i = 0; i < db->size; i++) {
+        std::cout<<db->entry[i]->key<<": ";
+        if(db->entry[i]->type == Type::INT){
+            std::cout << *(static_cast<int*>(db->entry[i]->value));
+        }else if(db->entry[i]->type == Type::DOUBLE){
+            std::cout << *(static_cast<double*>(db->entry[i]->value));
+        }else if(db->entry[i]->type == Type::STRING){
+            std::cout <<"\""<< *(static_cast<std::string*>(db->entry[i]->value)) <<"\"";
+        }else if(db->entry[i]->type == Type::ARRAY){
             // 히히 나중에 해야지
         }
         std::cout<<std::endl;
@@ -62,7 +62,7 @@ void _get(){
     std::string key = "";
     std::cout << "key: ";
     std::cin >> key;
-    Entry* getEntryData = get(db, key);
+    Entry* getEntryData = get(*db, key);
     if(getEntryData == nullptr){ // 만약 값이 없다면 ~~ 
         std::cout << "not found" << std::endl;
         return;
@@ -84,16 +84,24 @@ void _get(){
 void _del(){
     std::string key = "";
     std::cin >> key;
-    remove(db, key);
+    remove(*db, key);
 }
 void exit(){
-    destroy(db);
+    destroy(*db);
     exit(0);
 }
 int main(){
     std::string inputString = "";
-    init(db);
+    init(*db);
     while(1){
+
+        ///debug
+        std::cout << "db size: " <<db->size << std::endl;
+        std::cout << "db capacity: " <<db->capacity << std::endl;
+        
+        
+        ///debug
+        
         std::cout << "command (list, add, get, del, exit): ";
         std::cin >> inputString;
         if(inputString == "add"){
@@ -105,7 +113,7 @@ int main(){
         }else if(inputString == "del"){
             _del();
         }else if(inputString == "exit"){
-            destroy(db);
+            destroy(*db);
             exit();
         }else{
             std::cout << "command Error" << std::endl << std::endl;
