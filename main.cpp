@@ -10,8 +10,103 @@
 // Database db;
 Database *db = new Database;
 
-void inputArray(){
+void inputArray(Array* superArray){
+    int size;
+    std::cout << "size: ";
+    std::cin >> size;
 
+    Array * dataArray = new Array[size];
+    for(int t=0; t<size; t++){
+        std::cout << "item["<< t <<"]: ";
+        std::cout << "type (int, double, string, array): ";
+        std::string inputType = ""; 
+        std::cin >> inputType;
+        if(inputType == "int"){
+            std::cout << "size: ";
+            std::cin >> size;
+            int * value = new int[size];
+            for(int i = 0; i<size; i++){
+                std::cout << "item["<< i <<"]: ";
+                std::cin >> value[i];
+            }
+            dataArray->type = Type::INT;
+            dataArray->size = size;
+            dataArray->items = value;
+        }else if(inputType == "double"){
+            std::cout << "size: ";
+            std::cin >> size;
+            double * value = new double[size];
+            for(int i = 0; i<size; i++){
+                std::cout << "item["<< i <<"]: ";
+                std::cin >> value[i];
+            }
+            dataArray->type = Type::DOUBLE;
+            dataArray->size = size;
+            dataArray->items = value;
+        }else if(inputType == "string"){
+            std::cout << "size: ";
+            std::cin >> size;
+            std::string * value = new std::string[size];
+            for(int i = 0; i<size; i++){
+                std::cout << "item["<< i <<"]: ";
+                std::cin >> value[i];
+            }
+            dataArray->type = Type::STRING;
+            dataArray->size = size;
+            dataArray->items = value;
+        }else if(inputType == "array"){
+            inputArray(superArray);
+        }
+    }
+    superArray->items = dataArray;
+}
+
+Array* input1Array(){
+    Array * dataArray = new Array;
+    std::cout << "value: ";
+    std::cout << "type (int, double, string, array): ";
+    std::string inputType = ""; 
+    std::cin >> inputType;
+    int size = 0;
+
+    if(inputType == "int"){
+        std::cout << "size: ";
+        std::cin >> size;
+        int * value = new int[size];
+        for(int i = 0; i<size; i++){
+            std::cout << "item["<< i <<"]: ";
+            std::cin >> value[i];
+        }
+        dataArray->type = Type::INT;
+        dataArray->size = size;
+        dataArray->items = value;
+    }else if(inputType == "double"){
+        std::cout << "size: ";
+        std::cin >> size;
+        double * value = new double[size];
+        for(int i = 0; i<size; i++){
+            std::cout << "item["<< i <<"]: ";
+            std::cin >> value[i];
+        }
+        dataArray->type = Type::DOUBLE;
+        dataArray->size = size;
+        dataArray->items = value;
+    }else if(inputType == "string"){
+        std::cout << "size: ";
+        std::cin >> size;
+        std::string * value = new std::string[size];
+        for(int i = 0; i<size; i++){
+            std::cout << "item["<< i <<"]: ";
+            std::cin >> value[i];
+        }
+        dataArray->type = Type::STRING;
+        dataArray->size = size;
+        dataArray->items = value;
+    }else if(inputType == "array"){
+        inputArray(dataArray);
+    }
+
+    return dataArray;
 }
 void _add(){
     std::string key = "";
@@ -34,14 +129,41 @@ void _add(){
         add(*db, inputEntry);
     }else if(type == "string"){
         std::string value = "";
+        std::cin.ignore();
         std::cout << "value: ";
-        std::cin >> value;
+        // std::cin >> value;
+        getline(std::cin, value);
+
         Entry * inputEntry = create(Type::STRING, key, &value);
         add(*db, inputEntry);
     }else if(type == "array"){
         // 히히 나중에 해야지
+        Array * array = input1Array();
+        Entry * inputEntry = create(Type::ARRAY, key, array);
+        add(*db, inputEntry);
     }
 
+}
+
+
+void getArray(Array* array){
+    std::cout << "[" ;
+    for(int i=0; i<array->size; i++){
+        if(i != 0){
+            std::cout <<", ";
+        }
+        if(array->type == Type::ARRAY){
+            
+            getArray(static_cast<Array*>(array->items));
+        }else if(array->type == Type::INT){
+            std::cout << *(static_cast<int*>(array->items));
+        }else if(array->type == Type::DOUBLE){
+            std::cout << *(static_cast<double*>(array->items));
+        }else if(array->type == Type::STRING){
+            std::cout <<"\""<< *(static_cast<std::string*>(array->items)) <<"\"";
+        }
+    }
+    std::cout << "]" << std::endl;
 }
 void _list(){
     for (unsigned long long i = 0; i < db->size; i++) {
@@ -53,7 +175,7 @@ void _list(){
         }else if(db->entry[i]->type == Type::STRING){
             std::cout <<"\""<< *(static_cast<std::string*>(db->entry[i]->value)) <<"\"";
         }else if(db->entry[i]->type == Type::ARRAY){
-            // 히히 나중에 해야지
+            getArray(static_cast<Array*>(db->entry[i]->value));
         }
         std::cout<<std::endl;
     }
@@ -71,7 +193,7 @@ void _get(){
     std::cout<<getEntryData->key<<": ";
 
     if(getEntryData->type == Type::ARRAY){
-        // 히히 나중에 해야지
+        getArray(static_cast<Array*>(getEntryData->value));
     }else if(getEntryData->type == Type::INT){
         std::cout << *(static_cast<int*>(getEntryData->value));
     }else if(getEntryData->type == Type::DOUBLE){
@@ -82,7 +204,9 @@ void _get(){
     std::cout<<std::endl;
 }
 void _del(){
+
     std::string key = "";
+    std::cout << "key: ";
     std::cin >> key;
     remove(*db, key);
 }
@@ -99,7 +223,6 @@ int main(){
         std::cout << "db size: " <<db->size << std::endl;
         std::cout << "db capacity: " <<db->capacity << std::endl;
         
-        
         ///debug
         
         std::cout << "command (list, add, get, del, exit): ";
@@ -111,6 +234,7 @@ int main(){
         }else if(inputString == "get"){
             _get();
         }else if(inputString == "del"){
+            // std::cout<<1;
             _del();
         }else if(inputString == "exit"){
             destroy(*db);

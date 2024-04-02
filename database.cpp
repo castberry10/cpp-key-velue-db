@@ -32,7 +32,21 @@ Entry *create(Type type, std::string key, void *value){
     Entry* entry = new Entry;
     entry->key = key;
     entry->type = type;
-    entry->value = value;
+    // entry->value = value;
+    if(entry->type == Type::INT){
+        int* copiedValue = new int(*static_cast<int*>(value));
+        entry->value = copiedValue;
+    }else if(entry->type == Type::DOUBLE){
+        double* copiedValue = new double(*static_cast<double*>(value));
+        entry->value = copiedValue;
+    }else if(entry->type == Type::STRING){
+        std::string* copiedValue = new std::string(*static_cast<std::string*>(value));
+        entry->value = copiedValue;
+    }else if(entry->type == Type::ARRAY){
+        // int* copiedValue = new int(*static_cast<int*>(value));
+        // entry->value = copiedValue;
+    }
+    
     return entry;
 }
 
@@ -63,7 +77,7 @@ void dataCopy(Database &database, Entry **currentEntry, Entry **copyEntry){
 // 데이터베이스에 엔트리를 추가한다.
 void add(Database &database, Entry *entry){
     // 넘칠라하면 늘리기
-    if(database.capacity * (2 / 3) < database.size){
+    if(database.capacity <= database.size){
         database.capacity *= 2;
         Entry ** newEntry = new Entry *[database.capacity];
         dataCopy(database, database.entry, newEntry);
@@ -94,14 +108,12 @@ Entry *get(Database &database, std::string &key){
 void remove(Database &database, std::string &key){
     for(int i = 0; i<database.size; i++){
         if(database.entry[i]->key == key){
-            // database.entry[i]->value;
             delEntryValue(database.entry[i]);
             delete database.entry[i];
             for(int index = i; index < database.size; index++){
                 database.entry[i] = database.entry[i + 1];
             }
             database.size--;
-            database.entry[i]->key = "";    
             break;
         }
     }
