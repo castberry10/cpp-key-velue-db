@@ -2,30 +2,6 @@
 #include <iostream>
 #include <string>
 
-// database
-// ㄴ entry
-// ㄴ entry
-//    ㄴ array
-
-// enum Type { INT, DOUBLE, STRING, ARRAY };
-
-// struct Array {
-//   int size;
-//   Type type;
-//   void *items;
-// };
-
-// struct Entry {
-//   Type type;
-//   std::string key;
-//   void *value;
-// };
-
-// struct Database {
-//   int size;
-//   int current;
-//   Entry *entry;
-// };
 
 // 엔트리를 생성한다.
 Entry *create(Type type, std::string key, void *value){
@@ -52,7 +28,7 @@ Entry *create(Type type, std::string key, void *value){
 
 // 데이터베이스를 초기화한다.
 void init(Database &database){
-    database.capacity = 128;
+    database.capacity = 65536;
     database.size = 0;
     // Entry* entrylist = new Entry[database.size];
     database.entry = new Entry*[database.capacity];
@@ -63,9 +39,8 @@ void init(Database &database){
 // Entry 포인트 배열을 복사한다.
 void dataCopy(Database &database, Entry **currentEntry, Entry **copyEntry){
     for (int i = 0; i < database.size; ++i) {
-        copyEntry[i] = currentEntry[i];
+        *copyEntry[i] = *currentEntry[i];
     }
-
 }
 
 void deepCopyEntry(Entry*& destination, Entry* source) {
