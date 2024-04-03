@@ -150,7 +150,13 @@ void _add(){
 void getArray(Array* array){
     std::cout << "[" ;
     if(array->type == Type::ARRAY){       
-        getArray(static_cast<Array*>(array->items));
+        for(int i=0; i<array->size; i++){
+            if(i != 0){
+                std::cout <<", ";
+            }
+            getArray(&(static_cast<Array*>(array->items)[i]));
+        }
+        
     }else if(array->type == Type::INT){
         for(int i=0; i<array->size; i++){
             if(i != 0){
