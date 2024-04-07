@@ -192,6 +192,7 @@ void getArray(Array* array){
 }
 
 void _list(){
+    // std::cout << "db size: " <<db->size << std::endl;
     for (unsigned long long i = 0; i < db->size; i++) {
         if(db->entry[i]->value != nullptr){
             std::cout<<db->entry[i]->key<<": ";

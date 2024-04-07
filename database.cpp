@@ -28,7 +28,7 @@ Entry *create(Type type, std::string key, void *value){
 
 // 데이터베이스를 초기화한다.
 void init(Database &database){
-    database.capacity = 65536 * 2;
+    database.capacity = 65536 * 16;
     database.size = 0;
     // Entry* entrylist = new Entry[database.size];
     database.entry = new Entry*[database.capacity];
@@ -47,30 +47,34 @@ void dataCopy(Database &database, Entry **currentEntry, Entry **copyEntry){
 // 데이터베이스에 엔트리를 추가한다.
 void add(Database &database, Entry *entry){
     // 넘칠라하면 늘리기
-    if(database.capacity <= database.size){
-        database.capacity *= 2;
-        Entry ** newEntry = new Entry *[database.capacity];
-        
-        dataCopy(database, database.entry, newEntry);
-        
-        for (unsigned long long i = 0; i < database.size; i++) {
-            std::cout<<database.entry[i]<<std::endl;
-            delete database.entry[i]; 
+    try{
+        // std::cout<<"0"<<std::endl;
+        if(database.capacity <= database.size){
+            // std::cout<<"1"<<std::endl;
+            database.capacity =  2 * database.capacity ;
+            // std::cout << "db capacity: " <<database.capacity << std::endl;
+            Entry * newEntry = new Entry [database.capacity];
+            // std::cout<<"2"<<std::endl;
+            dataCopy(database, database.entry, &newEntry);
+            // std::cout<<"3"<<std::endl;
+            for (unsigned long long i = 0; i < database.size; i++) {
+                delete database.entry[i]; 
+            }
+            // std::cout<<"4"<<std::endl;
+            
+            delete[] database.entry;
+            // std::cout<<"4.5"<<std::endl;  
+            database.entry = &newEntry;
+            // std::cout<<"5"<<std::endl;       
         }
-        // std::cout<<"4"<<std::endl;
-        
-        delete[] database.entry;
-        // std::cout<<"4.5"<<std::endl;  
-        database.entry = newEntry;
-        // std::cout<<"5"<<std::endl;
-        
+
+        database.entry[database.size] = entry;
+        database.size++;
+        // std::cout<<"6"<<std::endl;
+    }catch(std::exception& e){
+        std::cout<<"add(): " <<e.what()<<std::endl;
     }
 
-    database.entry[database.size] = entry;
-    database.size++;
-    // std::cout<<"6"<<std::endl;
-        
-    
 }
 
 // 데이터베이스에서 키에 해당하는 엔트리를 찾는다.
