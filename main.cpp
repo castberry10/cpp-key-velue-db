@@ -9,7 +9,17 @@
 
 // Database db;
 Database *db = new Database;
+
 void getNdel(std::string key);
+void _add();
+void _list();
+void _get();
+void _del();
+void exit();
+void getArray(Array* array);
+void inputArray(Array* superArray);
+Array* input1Array();
+
 void inputArray(Array* superArray){
     int size;
     std::cout << "size: ";
@@ -69,7 +79,7 @@ Array* input1Array(){
     int size;
     std::cout << "size: ";
     std::cin >> size;
-    
+    dataArray->size = size;
     if(inputType == "int"){
         int * value = new int[size];
         for(int i = 0; i<size; i++){
@@ -104,7 +114,6 @@ Array* input1Array(){
         dataArray->items = itemsArray;
         dataArray->type = Type::ARRAY;
     }
-    dataArray->size = size;
     return dataArray;
 }
 void _add(){
@@ -137,7 +146,6 @@ void _add(){
         Entry * inputEntry = create(Type::STRING, key, &value);
         add(*db, inputEntry);
     }else if(type == "array"){
-        // 히히 나중에 해야지
         std::cout << "value: ";
         Array * array = input1Array();
         Entry * inputEntry = create(Type::ARRAY, key, array);
@@ -162,7 +170,7 @@ void getArray(Array* array){
             if(i != 0){
                 std::cout <<", ";
             }
-            std::cout << static_cast<int*>(array->items)[i];
+            std::cout << (static_cast<int*>(array->items))[i];
         }
     }else if(array->type == Type::DOUBLE){
         for(int i=0; i<array->size; i++){
@@ -180,8 +188,9 @@ void getArray(Array* array){
         }
     }
 
-    std::cout << "]" << std::endl;
+    std::cout << "]";
 }
+
 void _list(){
     for (unsigned long long i = 0; i < db->size; i++) {
         if(db->entry[i]->value != nullptr){

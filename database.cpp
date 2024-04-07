@@ -8,7 +8,7 @@ Entry *create(Type type, std::string key, void *value){
     Entry* entry = new Entry;
     entry->key = key;
     entry->type = type;
-    // entry->value = value;
+    entry->value = value;
     if(entry->type == Type::INT){
         int* copiedValue = new int(*static_cast<int*>(value));
         entry->value = copiedValue;
@@ -19,8 +19,8 @@ Entry *create(Type type, std::string key, void *value){
         std::string* copiedValue = new std::string(*static_cast<std::string*>(value));
         entry->value = copiedValue;
     }else if(entry->type == Type::ARRAY){
-        // int* copiedValue = new int(*static_cast<int*>(value));
-        // entry->value = copiedValue;
+        Array* copiedValue = new Array(*static_cast<Array*>(value));
+        entry->value = copiedValue;
     }
     
     return entry;
@@ -28,7 +28,7 @@ Entry *create(Type type, std::string key, void *value){
 
 // 데이터베이스를 초기화한다.
 void init(Database &database){
-    database.capacity = 65536;
+    database.capacity = 65536 * 2;
     database.size = 0;
     // Entry* entrylist = new Entry[database.size];
     database.entry = new Entry*[database.capacity];
@@ -40,19 +40,6 @@ void init(Database &database){
 void dataCopy(Database &database, Entry **currentEntry, Entry **copyEntry){
     for (int i = 0; i < database.size; ++i) {
         *copyEntry[i] = *currentEntry[i];
-    }
-}
-
-void deepCopyEntry(Entry*& destination, Entry* source) {
-    destination = new Entry;
-    destination->type = source->type;
-    destination->key = source->key;
-    destination->value = source->value;
-}
-
-void dataCopy(Database &database, Entry **copyEntry) {
-    for (unsigned long long i = 0; i < database.size; ++i) {
-        deepCopyEntry(copyEntry[i], database.entry[i]);
     }
 }
 
