@@ -18,9 +18,9 @@ struct Entry {
 };
 
 struct Database {
-  int size;
-  int current;
-  Entry *entry;
+  unsigned long long capacity;
+  unsigned long long size;
+  Entry **entry;
 };
 
 // 엔트리를 생성한다.
@@ -29,6 +29,11 @@ Entry *create(Type type, std::string key, void *value);
 // 데이터베이스를 초기화한다.
 void init(Database &database);
 
+// 데이터베이스의 데이터를 복사한다.
+void dataCopy(Database &database, Entry **currentEntry, Entry **copyEntry);
+
+// 주어진 엔트리의 value 삭제
+void delEntryValue(Entry* entry);
 // 데이터베이스에 엔트리를 추가한다.
 void add(Database &database, Entry *entry);
 
